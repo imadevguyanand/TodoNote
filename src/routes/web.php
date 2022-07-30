@@ -1,6 +1,6 @@
 <?php
 
-/** @var \Laravel\Lumen\Routing\Router $router */
+use Laravel\Lumen\Routing\Router;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +16,10 @@
 $router->get('/', function () use ($router) {
     return "TodoNotes API using ===========> " . $router->app->version();
 });
+
+// Unprotected Routes
+// Sign up a new user
+$router->post('/sign-up', ['uses' => 'UserController@signUpUser']);
+
+// List all the todo's for a specific user
+$router->get('/user/{id}/list-all-todo', ['uses' => 'TodoController@listAllTodos']);
