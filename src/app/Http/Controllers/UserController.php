@@ -33,9 +33,7 @@ class UserController extends Controller
     {
         $formData = [
             'email' => $request->email,
-            'password' => $request->password,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
+            'password' => $request->password
         ];
 
         // Basic validation rules
