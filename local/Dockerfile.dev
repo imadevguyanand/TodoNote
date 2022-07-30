@@ -25,6 +25,8 @@ RUN apt update \
 # Install composer 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+RUN docker-php-ext-install pcntl pdo pdo_mysql
+
 COPY docker/run-app.sh docker/setup-app.sh /sbin/
 
 RUN chmod u+x /sbin/setup-app.sh

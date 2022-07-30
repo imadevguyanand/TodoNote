@@ -19,23 +19,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var string[]
      */
     protected $fillable = [
-        'email',
+        'user_id',
+        'content', 
+        'completed_at'
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var string[]
-     */
-    protected $hidden = [
-        'password',
-    ];
-
-    /*
-     * Get all todonotes
-     */
-    public function todonotes()
+    public function user()
     {
-        return $this->hasMany('App\Models\TodoNote');
+        return $this->belongsTo('App\Models\TodoNote');
     }
 }
