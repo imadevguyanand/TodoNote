@@ -54,9 +54,11 @@
     git clone https://github.com/imadevguyanand/TodoNote.git
     ```
 
-2.  In the local folder make a copy of conf.template.sh and rename the file as **conf.sh**
+2.  In the "local" folder make a copy of conf.template.sh and rename the file as **conf.sh**
 
-3.  Fill out the variables in conf.sh
+3.  Create a database for the application using terminal or use your favourite GUI for the workbench
+
+4.  Fill out the variables in conf.sh
     Some notes and example values are below:
 
     ```
@@ -68,7 +70,8 @@
     Ex: if APP_PORT_PREFIX=57 then your application will be on localhost:57080
 
     # Directory you want the logs, sessions, cache and views to go in
-    export MOUNT_DIR= path to your mount folder (if it doesn't exist the set-up script will create it).
+    create a folder any where on your machine and give the path to the folder
+    export MOUNT_DIR= path to your mount folder
 
     # Path to this project root,
     export APP_DIR= path to the project on your local machine.
@@ -80,7 +83,7 @@
     export DB_PASS= MYSQL server password
     ```
 
-4.  In a terminal window navigate to the TodoNote folder and run:
+5.  In a terminal window navigate to the TodoNote folder and run:
 
     ```
     local/up.sh
@@ -88,38 +91,32 @@
 
     This will create the docker environment. This will take several minutes to run. This command will build the docker image and deploy the stack on to the Docker Swarms
 
-5.  Make sure the container is running by executing the below command. Copy the container ID which you need it in the next step
+6.  Make sure the container is running by executing the below command. Copy the container ID which you need it in the next step
 
     ```
     docker ps
     ```
 
-6.  Once the service has been deployed exec into the container by running:
+7.  Once the service has been deployed exec into the container by running:
 
     ```
     docker exec -it <container_name_or_id> bash
     ```
 
-7.  Install all the packages the application needs. This will take few minutes
+8.  Install all the packages the application needs. This will take few minutes
 
     ```
     composer install
     ```
 
-8.  Run Migration command to create tables in the Database
+9.  Run Migration command to create tables in the Database
     ```
     php artisan migrate
     ```
-9.  Install encryption keys and other necessary stuff for Passport
+10. Install encryption keys for Passport
 
     ```
     php artisan passport:install
-    ```
-
-10. Create Password grant client and give the same name as **todo-api**
-
-    ```
-     php artisan passport:client --password
     ```
 
 11. Navigate to http://localhost:{APP_PORT_PREFIX}

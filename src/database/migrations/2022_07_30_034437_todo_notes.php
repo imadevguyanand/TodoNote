@@ -23,7 +23,7 @@ class TodoNotes extends Migration
                   ->onDelete('cascade');
 
             $table->longText('content');
-            $table->timestamp('completed_at')->default(null);
+            $table->timestamp('completed_at')->nullable();
         });
     }
 

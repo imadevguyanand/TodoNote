@@ -28,7 +28,7 @@ class UserController extends Controller
      */
     public function __construct(User $user)
     {
-        $this->client = DB::table('oauth_clients')->where('name', 'todo-api')->first();
+        $this->client = DB::table('oauth_clients')->where('name', 'Lumen Password Grant Client')->first();
         $this->user = new CRUDRepository($user);
     }
 

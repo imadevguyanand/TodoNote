@@ -17,7 +17,8 @@ class Users extends Migration
             $table->bigIncrements("id");
             $table->string('email')->unique();
             $table->string('password');
-            $table->timestamp();
+            $table->timestamp('created_at');
+            $table->timestamp('updated_at');
         });
     }
 
