@@ -21,5 +21,20 @@ $router->get('/', function () use ($router) {
 // Sign up a new user
 $router->post('/sign-up', ['uses' => 'UserController@signUpUser']);
 
+// Sign In a user
+$router->post('/sign-in', ['uses' => 'UserController@signIn']);
+
 // List all the todo's for a specific user
-$router->get('/user/{id}/list-all-todo', ['uses' => 'TodoController@listAllTodos']);
+$router->get('/user/{id}/list-all-todo', ['uses' => 'TodoController@listByUserId']);
+
+// Protected middlewares
+$router->group(['prefix' => 'api', 'middleware' => 'auth'], function () use ($router) {
+
+    $router->post('/todo', ['as' => 'create_todo', 'uses' => 'TodoController@store']);
+
+    $router->delete('/todo/{id}', ['as' => 'delete_todo', 'uses' => 'TodoController@delete']);
+
+    $router->put('/todo/{id}', ['as' => 'update_todo', 'uses' => 'TodoController@update']);
+
+    $router->get('/todo', ['as' => 'fetch_all_todos', 'uses' => 'TodoController@list']);
+});
