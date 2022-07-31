@@ -114,40 +114,17 @@ class TodoController extends Controller
     {
         $userId = $request->user()->id;
 
-        $exists = TodoNote::where('id', $id)
-                ->where('user_id', $userId)
-                ->exists();
-
-        if(!$exists) {
-            return response()->json([
-                'message' => 'Invalid Todo ID: ' . $id,
-            ], Response::HTTP_NOT_ACCEPTABLE);
-        }
-
-        $input = [
-            'completed' => $request->completed
-        ];
-
-        $rules = [
-            'completed' => 'required|boolean'
-        ];
-
-        $messages = [
-            'required' => 'The :attribute is required.'
-        ];
-
-        $validator = Validator::make($input, $rules, $messages);
-
-        // Check if the parameters passed are invalid
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => $validator->messages()->all(),
-            ], Response::HTTP_NOT_ACCEPTABLE);
-        }
-
         try {
+            $result = $this->authorizeTodoId($userId, $id);
+
+            if($result  === false) {
+                return response()->json([
+                    'message' => 'Invalid Todo ID: ' . $id,
+                ], Response::HTTP_NOT_ACCEPTABLE);
+            }
+
             $data = [
-                'completed_at' => $request->completed == 1 ? Carbon::now() : null
+                'completed_at' => filter_var($request->completed, FILTER_VALIDATE_BOOLEAN) === true ? Carbon::now() : null
             ];
             if($this->todo->update($id, $data)) {
                 return response()->json([
@@ -174,17 +151,18 @@ class TodoController extends Controller
      */
     public function delete(Request $request, $id) 
     {
-        try {
-            $userId = $request->user()->id;
-            $exists = TodoNote::where('id', $id)
-                ->where('user_id', $userId)
-                ->exists();
+        $userId = $request->user()->id;
 
-            if(!$exists) {
+        try {
+            $result = $this->authorizeTodoId($userId, $id);
+
+            if($result  === false) {
                 return response()->json([
                     'message' => 'Invalid Todo ID: ' . $id,
                 ], Response::HTTP_NOT_ACCEPTABLE);
             }
+
+            $userId = $request->user()->id;
     
             return response()->json([
                 'message' => $this->todo->delete($id), 
@@ -224,7 +202,25 @@ class TodoController extends Controller
         }
     }
 
-    private function getTodoListByUser($id) {
+    private function getTodoListByUser($id) 
+    {
         return User::findorfail($id)->todonotes()->get();
+    }
+
+    /**
+     * Authorize Todo 
+     * 
+     * @param Integer $userId
+     * @param Integer $todoId
+     * 
+     * @return Boolean
+     */
+    private function authorizeTodoId($userId, $todoId) 
+    {
+        $exists = TodoNote::where('id', $todoId)
+        ->where('user_id', $userId)
+        ->exists();
+
+        return $exists;
     }
 }
