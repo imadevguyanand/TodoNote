@@ -58,7 +58,7 @@
 
 3.  Create a database for the application using terminal or use your favourite GUI for the workbench
 
-4.  Fill out the variables in conf.sh
+4.  Fill out the variables in conf.sh.
     Some notes and example values are below:
 
     ```
@@ -70,7 +70,7 @@
     Ex: if APP_PORT_PREFIX=57 then your application will be on localhost:57080
 
     # Directory you want the logs, sessions, cache and views to go in
-    create a folder any where on your machine and give the path to the folder
+    create a folder any where on your machine and give the absolute path to the folder
     export MOUNT_DIR= path to your mount folder
 
     # Path to this project root,
@@ -89,7 +89,7 @@
     local/up.sh
     ```
 
-    This will create the docker environment. This will take several minutes to run. This command will build the docker image and deploy the stack on to the Docker Swarms
+    This will create the docker environment and will take several minutes to run. This command will build the docker image and deploy the stack on to the Docker Swarms
 
 6.  Make sure the container is running by executing the below command. Copy the container ID which you need it in the next step
 
