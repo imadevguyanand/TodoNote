@@ -113,6 +113,7 @@
     ```
     php artisan migrate
     ```
+    ![Deploy!](https://drive.google.com/uc?export=view&id=1bA7fYkALZpiAbrFlBsD1w00Rg37rZZ3A)
 10. Install encryption keys for Passport
 
     ```
