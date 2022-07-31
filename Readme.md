@@ -128,3 +128,18 @@
 Here is the postman collection with all the requests to test the API's
 
 https://documenter.getpostman.com/view/20213729/UzdzUkvc
+
+### Setup postman
+
+1. Open the above collection in a browser
+2. In the top right corner you'll see a button to "run in postman" click that and open the collection in desktop
+3. Look for the environment tab and update the url
+   - The url will be in the format of http://localhost:57080, 57 is the port number
+4. Now the setup is complete, try to sign up using an email and a password
+5. Using the email and password try to get a token using the **Get Token** end point
+6. You have access to other end points now
+
+## Contact Information
+
+Feel free to contact me if you have any questions regarding this project. My email is
+<anandmsmaven@gmail.com> and contact number is **+1 226-752-9875**
