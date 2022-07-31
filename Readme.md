@@ -2,71 +2,132 @@
 
 ## TODO API is built using Lumen framework running as a Docker container
 
-**Prerequisites to run the application on your host machine**
+### Todo Features
 
-1. Download the docker desktop based on your operating system
+- Sign up
+- Sign In
+- Create a Todo
+- Mark todo as complete
+- Mark todo as incomplete
+- Delete todo
+- List all todo's
 
-   #### Mac
+<br>
 
-   https://docs.docker.com/desktop/mac/install/
+### TechStack and Software Packages
 
-   #### Windows
+- Language: PHP 8.1.0
+- Web Server: Apache
+- Framework: Lumen 8.x
+- Deployement Infrastructure: Docker Swarms
+- Testing Framework: PHPUnit
 
-   https://docs.docker.com/desktop/windows/install/
+  <br>
+
+### Prerequisites to run the application on your host machine
+
+- Download the docker desktop based on your operating system
+
+  **Mac**
+
+  https://docs.docker.com/desktop/mac/install/
+
+  **Windows**
+
+  https://docs.docker.com/desktop/windows/install/
+
+- Download and Install Mysql Server
+
+  https://dev.mysql.com/downloads/mysql/
+
+- Postman
+
+  https://www.postman.com/downloads/
+
+<br>
 
 ### Steps to get the application running on your machine.
 
-1. Clone this repository
+1.  Clone this repository
 
-   ```
-   git clone https://github.com/imadevguyanand/TodoNote.git
-   ```
+    ```
+    git clone https://github.com/imadevguyanand/TodoNote.git
+    ```
 
-2. In the local folder make a copy of conf.template.sh and rename the file as **conf.sh**
+2.  In the local folder make a copy of conf.template.sh and rename the file as **conf.sh**
 
-3. Fill out the variables in conf.sh
-   Some notes and example values are below:
+3.  Fill out the variables in conf.sh
+    Some notes and example values are below:
 
-   ```
-   # Local Variables
-   export HOST_ADDRESS= Should either be "docker.for.win.localhost" for windows or "docker.for.mac.localhost" for Mac depending on what system you are using
+    ```
+    # Local Variables
+    export HOST_ADDRESS= Should either be "docker.for.win.localhost" for windows or "docker.for.mac.localhost" for Mac depending on what system you are using
 
-   # The port you want the app to run on your system
-   export APP_PORT_PREFIX= the port your application will be on is APP_PORT_PREFIX + 080
-   Ex: if APP_PORT_PREFIX=57 then your application will be on localhost:57080
+    # The port you want the app to run on your system
+    export APP_PORT_PREFIX= the port your application will be on is APP_PORT_PREFIX + 080
+    Ex: if APP_PORT_PREFIX=57 then your application will be on localhost:57080
 
-   # Directory you want the logs, sessions, cache and views to go in
-   export MOUNT_DIR= path to your mount folder (if it doesn't exist the set-up script will create it).
+    # Directory you want the logs, sessions, cache and views to go in
+    export MOUNT_DIR= path to your mount folder (if it doesn't exist the set-up script will create it).
 
-   # Path to this project root,
-   export APP_DIR= path to the project on your local machine.
-   Ex: /Users/arajendran/Documents/PROJECTS/TodoNote
-   ```
+    # Path to this project root,
+    export APP_DIR= path to the project on your local machine.
+    Ex: /Users/arajendran/Documents/PROJECTS/TodoNote
 
-4. In a terminal window navigate to the TodoNote folder and run:
+    # Database
+    export DB_NAME= Name of the database
+    export DB_USER= MYSQL server username
+    export DB_PASS= MYSQL server password
+    ```
 
-   ```
-   local/up.sh
-   ```
+4.  In a terminal window navigate to the TodoNote folder and run:
 
-   This will create the docker environment. This will take several minutes to run. This command will build the docker image and deploy the stack on to the Docker Swarms
+    ```
+    local/up.sh
+    ```
 
-5. Make sure the container is running by executing the below command. Copy the container ID which you need it in the next step
+    This will create the docker environment. This will take several minutes to run. This command will build the docker image and deploy the stack on to the Docker Swarms
 
-   ```
-   docker ps
-   ```
+5.  Make sure the container is running by executing the below command. Copy the container ID which you need it in the next step
 
-6. Once the service has been deployed exec into the container by running:
+    ```
+    docker ps
+    ```
 
-   ```
-   docker exec -it <container_name_or_id> bash
-   ```
+6.  Once the service has been deployed exec into the container by running:
 
-7. Install all the packages the application needs. This will take few minutes
+    ```
+    docker exec -it <container_name_or_id> bash
+    ```
 
-   ```
-   composer install
-   ```
+7.  Install all the packages the application needs. This will take few minutes
 
-8. Navigate to http://localhost:{APP_PORT_PREFIX}
+    ```
+    composer install
+    ```
+
+8.  Run Migration command to create tables in the Database
+    ```
+    php artisan migrate
+    ```
+9.  Install encryption keys and other necessary stuff for Passport
+
+    ```
+    php artisan passport:install
+    ```
+
+10. Create Password grant client and give the same name as **todo-api**
+
+    ```
+     php artisan passport:client --password
+    ```
+
+11. Navigate to http://localhost:{APP_PORT_PREFIX}
+
+<br>
+
+### Testing
+
+Here is the postman collection with all the requests to test the API's
+
+https://documenter.getpostman.com/view/20213729/UzdzUkvc
