@@ -12,9 +12,9 @@ use App\Models\TodoNote;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Eloquent\Repositories\CRUDRepository;
-use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Http\Helper;
 
 class TodoController extends Controller
 {
@@ -23,9 +23,10 @@ class TodoController extends Controller
      *
      * @return void
      */
-    public function __construct(TodoNote $todo)
+    public function __construct()
     {
-        $this->todo = new CRUDRepository($todo);
+        $this->helper = new Helper();
+        $this->todo = new CRUDRepository(new TodoNote());
     }
 
     /**
@@ -37,21 +38,12 @@ class TodoController extends Controller
      */
     public function list(Request $request) 
     {
+        // Fetch the user Id
         $userId = $request->user()->id;
 
-        try {
-            return response()->json([
-                "message" => $this->getTodoListByUser($userId)
-            ], Response::HTTP_OK);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => $e->getMessage()],
-                Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()],
-                Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return response()->json([
+            'message' => $this->getTodoListByUser($userId)
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -79,34 +71,25 @@ class TodoController extends Controller
             'required' => 'The :attribute is required.'
         ];
 
-        $validator = Validator::make($input, $rules, $messages);
-
-        // Check if the parameters passed are invalid
-        if ($validator->fails()) {
+        // Check if the parameters passed are valid
+        $validationResult = $this->helper->validator($input, $rules, $messages);
+        
+        if (count($validationResult) > 0) {
             return response()->json([
-                'message' => $validator->messages()->all(),
+                'message' => $validationResult,
             ], Response::HTTP_NOT_ACCEPTABLE);
         }
 
-        try {
-            return response()->json([
-                'message' => $this->todo->create($input)
-            ], Response::HTTP_OK);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => "No Query Results Found for: " . $id],
-                Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()],
-                Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return response()->json([
+            'message' => $this->todo->create($input)
+        ], Response::HTTP_CREATED);
     }
 
     /**
      * Update a Todo for an user
      * 
      * @param Request $request
+     * @param Integer $id
      * 
      * @return JsonResponse
      */
@@ -114,31 +97,22 @@ class TodoController extends Controller
     {
         $userId = $request->user()->id;
 
-        try {
-            $result = $this->authorizeTodoId($userId, $id);
+        $isAuthorized = $this->authorizeTodoId($userId, $id);
 
-            if($result  === false) {
-                return response()->json([
-                    'message' => 'Invalid Todo ID: ' . $id,
-                ], Response::HTTP_NOT_ACCEPTABLE);
-            }
+        if($isAuthorized === false) {
+            return response()->json([
+                'message' => 'Invalid Todo ID: ' . $id,
+            ], Response::HTTP_NOT_ACCEPTABLE);
+        }
 
-            $data = [
-                'completed_at' => filter_var($request->completed, FILTER_VALIDATE_BOOLEAN) === true ? Carbon::now() : null
-            ];
-            if($this->todo->update($id, $data)) {
-                return response()->json([
-                    'message' => $this->todo->getById($id)
-                ], Response::HTTP_OK);
-            }
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        $data = [
+            'completed_at' => $this->helper->isBool($request->completed) === true ? Carbon::now() : null
+        ];
+
+        if($this->todo->update($id, $data)) {
             return response()->json([
-                'message' => "No Query Results Found for: " . $id],
-                Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()],
-                Response::HTTP_INTERNAL_SERVER_ERROR);
+                'message' => $this->todo->getById($id)
+            ], Response::HTTP_OK);
         }
     }
 
@@ -146,36 +120,27 @@ class TodoController extends Controller
      * Delete a Todo for an user
      * 
      * @param Request $request
+     * @param String $id
      * 
-     * @return JsonResponses
+     * @return JsonResponse
      */
     public function delete(Request $request, $id) 
     {
         $userId = $request->user()->id;
 
-        try {
-            $result = $this->authorizeTodoId($userId, $id);
+        $isAuthorized = $this->authorizeTodoId($userId, $id);
 
-            if($result  === false) {
-                return response()->json([
-                    'message' => 'Invalid Todo ID: ' . $id,
-                ], Response::HTTP_NOT_ACCEPTABLE);
-            }
-
-            $userId = $request->user()->id;
-    
+        if($isAuthorized === false) {
             return response()->json([
-                'message' => $this->todo->delete($id), 
-            ],Response::HTTP_NO_CONTENT);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => "No Query Results Found for: " . $id],
-                Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()],
-                Response::HTTP_INTERNAL_SERVER_ERROR);
+                'message' => 'Invalid Todo ID: ' . $id,
+            ], Response::HTTP_NOT_ACCEPTABLE);
         }
+
+        if($this->todo->delete($id)) {
+            return response()->json([
+                'message' => "Todo Id Deleted: " . $id, 
+            ], Response::HTTP_OK);
+        }        
     }
 
     /**
@@ -187,21 +152,18 @@ class TodoController extends Controller
      */
     public function listByUserId(int $id) 
     {
-        try {
-            return response()->json([
-                'message' => $this->getTodoListByUser($id)
-            ], Response::HTTP_OK);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'message' => "No Query Results Found for: " . $id],
-                Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()],
-                Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return response()->json([
+            'message' => $this->getTodoListByUser($id)
+        ], Response::HTTP_OK);
     }
 
+    /**
+     * Get the list of todo's 
+     * 
+     * @param String $id
+     * 
+     * @return Mixed throwable | JsonResponse
+     */
     private function getTodoListByUser($id) 
     {
         return User::findorfail($id)->todonotes()->get();
@@ -218,8 +180,8 @@ class TodoController extends Controller
     private function authorizeTodoId($userId, $todoId) 
     {
         $exists = TodoNote::where('id', $todoId)
-        ->where('user_id', $userId)
-        ->exists();
+                    ->where('user_id', $userId)
+                    ->exists();
 
         return $exists;
     }

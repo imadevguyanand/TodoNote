@@ -8,6 +8,8 @@ use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
+use Symfony\Component\HttpFoundation\Response;
+use App\Exceptions\PasswordClientNotFoundException;
 
 class Handler extends ExceptionHandler
 {
@@ -49,6 +51,18 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        if ($request->wantsJson()) {   
+            if($exception instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                return response()->json([
+                    'message' => "No Query Results Found"],
+                   Response::HTTP_NOT_FOUND);
+            } if($exception instanceof PasswordClientNotFoundException) {
+                return response()->json([
+                    'message' => "Password Client Grant Not Found! Create one by running php artisan passport:install"],
+                   Response::HTTP_NOT_FOUND);
+            }
+        } 
+    
         return parent::render($request, $exception);
     }
 }
