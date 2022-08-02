@@ -14,6 +14,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 {
     use HasApiTokens, Authenticatable, Authorizable, HasFactory;
 
+    const TEST_USER_ID = 1;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -31,9 +33,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @var string[]
      */
-    protected $hidden = [
-        'password',
-    ];
+    // protected $hidden = [
+    //     'password',
+    // ];
 
     /*
      * Get all todonotes

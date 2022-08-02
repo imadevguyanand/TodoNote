@@ -14,7 +14,7 @@ use Laravel\Lumen\Routing\Router;
 */
 
 $router->get('/', function () use ($router) {
-    return "TodoNotes API using ===========> " . $router->app->version();
+    return $router->app->version();
 });
 
 // Unprotected Routes
