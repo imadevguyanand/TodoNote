@@ -21,6 +21,7 @@
 - Framework: Lumen 8.x
 - Deployement Infrastructure: Docker Swarms
 - Testing Framework: PHPUnit
+- Authentication: Lumen Passport Package
 
   <br>
 
