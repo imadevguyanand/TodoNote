@@ -19,6 +19,17 @@ class UserTest extends TestCase
         ]);
     }
 
+    public function test_user_can_not_signup_using_duplicate_email()
+    {
+        $user = User::factory()->make(['email' => 'test_user@gmail.com'])->toArray();
+        $user = array_merge($user, ['password' => Hash::make('complexpassword')]);
+    
+        $response = $this->json('POST', '/sign-up', $user);
+        $response->seeJson([
+            'message' => ["The email is already taken"]
+        ]);
+    }
+
     public function test_user_can_not_sign_up_without_email()
     {
         $user = User::factory()->make(['email' => ''])->toArray();
