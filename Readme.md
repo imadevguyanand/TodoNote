@@ -157,6 +157,16 @@ Execute the unit tests by running the below command
 vendor/bin/phpunit
 ```
 
+## Next Steps
+
+1. Build the UI using react
+   - Sign Up Page
+   - Sign In Page
+   - Todo Page to perform CRUD
+2. Call the API end points using the axios method
+3. Obtain the access token and store it in the localstorage
+4. Call the other end points passing the token stored in the storage
+
 ## Contact Information
 
 Feel free to contact me if you have any questions regarding this project. My email is
