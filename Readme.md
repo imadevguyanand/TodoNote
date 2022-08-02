@@ -114,7 +114,7 @@
     ```
     php artisan migrate
     ```
-    ![Deploy!](https://drive.google.com/uc?export=view&id=1bA7fYkALZpiAbrFlBsD1w00Rg37rZZ3A)
+    ![Migraton!](https://drive.google.com/uc?export=view&id=1bA7fYkALZpiAbrFlBsD1w00Rg37rZZ3A)
 10. Install encryption keys for Passport
 
     ```
@@ -157,6 +157,8 @@ Execute the unit tests by running the below command
 ```
 vendor/bin/phpunit
 ```
+
+![testing!](https://drive.google.com/uc?export=view&id=1VWgxZlhMxLtL51cH4Yj18XJo6MBOAIi7)
 
 ## Next Steps
 
