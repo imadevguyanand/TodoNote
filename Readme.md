@@ -120,7 +120,14 @@
     php artisan passport:install
     ```
 
-11. Navigate to http://localhost:{APP_PORT_PREFIX}
+11. Run the seeder command to populate the tables
+
+    ```
+    php artisan db:seed
+
+    ```
+
+12. Navigate to http://localhost:{APP_PORT_PREFIX}
 
 <br>
 
@@ -130,7 +137,7 @@ Here is the postman collection with all the requests to test the API's
 
 https://documenter.getpostman.com/view/20213729/UzdzUkvc
 
-### Setup postman
+#### Setup postman
 
 1. Open the above collection in a browser
 2. In the top right corner you'll see a button to "run in postman" click that and open the collection in desktop
@@ -139,6 +146,16 @@ https://documenter.getpostman.com/view/20213729/UzdzUkvc
 4. Now the setup is complete, try to sign up using an email and a password
 5. Using the email and password try to get a token using the **Get Token** end point
 6. You have access to other end points now
+
+<br>
+
+### PHPUnit
+
+Execute the unit tests by running the below command
+
+```
+vendor/bin/phpunit
+```
 
 ## Contact Information
 

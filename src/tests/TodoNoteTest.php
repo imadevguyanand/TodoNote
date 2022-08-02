@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TodoTest extends TestCase
 {
-    public function testListTodo()
+    public function test_list_todo()
     {
         $user = $this->getTestUser();
 
@@ -17,7 +17,7 @@ class TodoTest extends TestCase
         $response->assertEquals(Response::HTTP_OK, $this->response->status());
     }
 
-    public function testCreateTodo()
+    public function test_create_todo()
     {
         $user = $this->getTestUser();
         $content = TodoNote::factory()->make()->toArray();
@@ -27,7 +27,7 @@ class TodoTest extends TestCase
         $response->assertEquals(Response::HTTP_CREATED, $this->response->status());
     }
 
-    public function testDeleteTodo()
+    public function test_delete_todo()
     {
         $user = $this->getTestUser();
         $todo = $this->getTestUserTodo();
@@ -37,7 +37,7 @@ class TodoTest extends TestCase
         $response->assertEquals(Response::HTTP_OK, $this->response->status());
     }
 
-    public function testMarkInComplete()
+    public function test_mark_incomplete()
     {
         $user = $this->getTestUser();
 
@@ -48,7 +48,7 @@ class TodoTest extends TestCase
         $response->assertEquals(Response::HTTP_OK, $this->response->status());
     }
 
-    public function testMarkComplete()
+    public function test_mark_complete()
     {
         $user = $this->getTestUser();
         $todo = $this->getTestUserTodo();
@@ -58,11 +58,38 @@ class TodoTest extends TestCase
         $response->assertEquals(Response::HTTP_OK, $this->response->status());
     }
 
-    public function testCanNotListTodoForInvalidUser()
+    public function test_list_todo_by_user()
+    {
+        $response = $this->call('GET', '/user/' . User::TEST_USER_ID . '/list-all-todo');
+
+        $this->assertEquals(Response::HTTP_OK, $response->status());
+    }
+
+    public function test_can_not_list_todo_for_invalid_user()
     {
         $response = $this->call('GET', '/user/100000/list-all-todo');
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->status());
+    }
+
+    public function test_can_not_create_todo_with_out_content()
+    {
+        $user = $this->getTestUser();
+        $content = TodoNote::factory()->make(['content' => ''])->toArray();
+
+        $response = $this->actingAs($user)->post('/api/todo', array_merge($content, ['user_id' => $user->id]));
+
+        $response->assertEquals(Response::HTTP_NOT_ACCEPTABLE, $this->response->status());
+    }
+
+    public function test_un_authorized_user_can_not_create_todo()
+    {
+        $user = $this->getTestUser();
+        $content = TodoNote::factory()->make()->toArray();
+
+        $response = $this->post('/api/todo', array_merge($content, ['user_id' => $user->id]));
+
+        $response->assertEquals(Response::HTTP_UNAUTHORIZED, $this->response->status());
     }
 
     public function getTestUser()
