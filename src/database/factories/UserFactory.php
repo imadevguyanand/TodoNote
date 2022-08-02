@@ -15,6 +15,8 @@ class UserFactory extends Factory
      */
     protected $model = User::class;
 
+    protected $guarded = [];
+
     /**
      * Define the model's default state.
      *
